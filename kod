@@ -1,0 +1,323 @@
+#include <SoftwareSerial.h>
+SoftwareSerial BT(10, 11); // RX, TX
+char command;
+
+#define sol_motor_1 3
+#define sol_motor_2 2
+#define sag_motor_1 4
+#define sag_motor_2 5
+
+#include <Servo.h>   // servo ve seri haberleşme için kütüphaneleri tanımlıyoruz.
+int pos1 = 90;
+int pos2 = 10;
+int pos3 = 90;
+
+Servo servo1;//kol
+
+Servo servo2;//sepet
+
+
+ 
+ 
+void setup() {
+pinMode(5,OUTPUT);   //Sol Motor 2
+pinMode(2,OUTPUT);   //Sol Motor 1
+pinMode(3,OUTPUT);   //Sağ Motor 1
+pinMode(4,OUTPUT);   //Sağ Motor 2
+pinMode(7,OUTPUT);   //far sol
+pinMode(8,OUTPUT);  //far sağ
+Serial.begin(9600);
+BT.begin(9600);
+
+Serial.println("Setup is Done!");
+
+//servo pinlerini tanımlıyoruz. sadece römork kullancaksanız bir servo yeterli. 
+ servo1.attach(6);
+
+ servo1.write(pos1);
+
+ servo2.attach(9);
+
+ servo2.write(pos2);
+
+
+}
+
+void stop(){
+
+  digitalWrite(sol_motor_1, LOW);
+  digitalWrite(sol_motor_2, LOW);
+  digitalWrite(sag_motor_1, LOW);
+  digitalWrite(sag_motor_2, LOW);
+  
+}
+void ileri(){
+
+  digitalWrite(sol_motor_1, LOW);
+  digitalWrite(sol_motor_2, HIGH);
+  digitalWrite(sag_motor_1, HIGH);
+  digitalWrite(sag_motor_2, LOW);
+  
+}
+
+void geri(){
+
+
+  digitalWrite(sol_motor_1, HIGH);
+  digitalWrite(sol_motor_2, LOW);
+  digitalWrite(sag_motor_1, LOW);
+  digitalWrite(sag_motor_2, HIGH);
+
+  
+}
+
+void sol(){
+
+  
+
+  digitalWrite(sol_motor_1, HIGH);
+  digitalWrite(sol_motor_2, LOW);
+  digitalWrite(sag_motor_1, HIGH);
+  digitalWrite(sag_motor_2, LOW);
+  
+}
+
+void sag(){
+  
+  digitalWrite(sol_motor_1, LOW);
+  digitalWrite(sol_motor_2, HIGH);
+  digitalWrite(sag_motor_1, LOW);
+  digitalWrite(sag_motor_2, HIGH);
+  
+}
+
+
+void antiClockwise() { 
+
+for(int i=0;i<5&&9<pos2&&pos2<75;i +=1) 
+
+{servo2.write(pos2);
+pos2=pos2+1;
+delay (25);
+  }
+  }
+
+  void clockwise() { 
+
+for(int i=0;i<5&&76>pos2&&pos2>10;i +=1) 
+
+{servo2.write(pos2);
+pos2=pos2-1;
+delay (25);
+  }
+
+}
+
+void sepety() { 
+
+for(int i=0;i<10&&9<pos2&&pos2<75;i +=1) 
+
+{servo2.write(pos2);
+pos2=pos2+1;
+delay (15);
+  }
+  }
+
+  void sepeta() { 
+
+for(int i=0;i<10&&76>pos2&&pos2>10;i +=1) 
+
+{servo2.write(pos2);
+pos2=pos2-1;
+delay (15);
+  }
+
+}
+void up () { 
+
+for(int i=0;i<10&&pos1<180;i +=1) 
+
+{servo1.write(pos1);
+pos1=pos1+1;
+delay (25);
+  }
+
+}
+
+void down() { 
+
+for(int i=0;i<10&&pos1>40;i +=1) 
+
+{servo1.write(pos1);
+pos1=pos1-1;
+delay (25);
+  }
+
+}  
+
+void koly () { 
+
+for(int i=0;i<30&&pos1<180;i +=1) 
+
+{servo1.write(pos1);
+pos1=pos1+1;
+delay (15);
+  }
+
+}
+
+void kola() { 
+
+for(int i=0;i<30&&pos1>40;i +=1) 
+
+{servo1.write(pos1);
+pos1=pos1-1;
+delay (15);
+  }
+
+}
+void loop() {
+
+
+  
+ if (BT.available() > 0) {   
+
+command = BT.read();
+
+   if(command == 'u'){            
+ ileri();
+}
+ 
+else if(command == 'd'){      
+  geri();
+}
+ 
+else if(command == 'l'){      
+  sol();
+}
+ 
+else if(command == 'r'){     
+ sag();
+}
+//Gelen veri 'W' ise ön farları aç
+  else if (command == 'W') {
+    digitalWrite(7, HIGH);
+    digitalWrite(8, HIGH);
+
+  }
+  /***************************Ön farları kapat*****************************/
+  //Gelen veri 'w' ise ön farları kapat
+  else if (command == 'w') {
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+  }
+   //Gelen veri 'Z' ise dörtlüyü aç
+  else if (command == 'Z') {
+    digitalWrite(7, HIGH);
+    digitalWrite(8, HIGH);
+    delay(500);
+    
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+    delay(500);
+
+     digitalWrite(7, HIGH);
+    digitalWrite(8, HIGH);
+    delay(500);
+    
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+    delay(500);
+
+     digitalWrite(7, HIGH);
+    digitalWrite(8, HIGH);
+    delay(500);
+    
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+    delay(500);
+     digitalWrite(7, HIGH);
+    digitalWrite(8, HIGH);
+    delay(500);
+    
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+    delay(500);
+     digitalWrite(7, HIGH);
+    digitalWrite(8, HIGH);
+    delay(500);
+    
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+    delay(500);
+  }
+  /***************************Dörtlüyü kapat*****************************/
+  //Gelen veri 'z' ise dörtlüyü kapat
+  else if (command == 'z') {
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+
+  }
+
+switch (command) {   
+
+
+case 'o':         
+
+stop();     
+
+break;   
+ 
+
+case 'b':         
+
+antiClockwise();     
+
+break;   
+
+case 'x':         
+
+clockwise();     
+
+break;   
+
+case 'y':         
+
+up();     
+
+break;   
+
+case 'a':         
+
+down();
+
+break;
+
+case 'e':         
+
+koly();
+
+break;
+
+case 'f':         
+
+kola();
+
+break;
+
+case 'g':         
+
+sepety();
+
+break;
+
+case 'p':         
+
+sepeta();
+
+break;
+    }
+
+  }
+
+}
